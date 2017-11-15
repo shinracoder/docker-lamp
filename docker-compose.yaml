@@ -1,0 +1,29 @@
+networks:
+  my-network:
+      driver: bridge
+      ipam:
+        config:
+        - subnet: 172.10.0.0/16
+          gateway: 172.10.5.254
+
+
+services:
+  lamp:
+      container_name: lamp
+      hostname: my_hostname
+      image: docker-lamp:debian-apache-php7.1.11
+      volumes:
+        - /home/myusername/www:/var/www/
+        - /vhosts/:/etc/apache2/site-enabled/
+        - /web/logs:/var/log
+      networks:
+        my-network:
+          ipv4_address: 172.10.0.1
+      ports:
+        - '8081:80'
+        - '80:80'
+      environment:
+        - PHP_IDE_CONFIG=serverName=my_hostname
+        - XDEBUG_CONFIG=idekey=PHPSTORM remote_host=${HOST_ADDRESS} profiler_enabled=0 remote_connect_back=0
+
+
